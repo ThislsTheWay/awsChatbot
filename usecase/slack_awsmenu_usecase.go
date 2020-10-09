@@ -178,11 +178,42 @@ func SendAwsmenuSlackPost(userid string, channel string, message map[string]stri
 		if err != nil {
 			log.Printf("[ERROR] Unable to send message to Slack Channel %s", err)
 		}
+	case "rds":
+		attachment := slack.Attachment{}
+		attachment.Color = "#36a64f"
+		attachment.Text = "AWS RDS Actions"
+		attachment.CallbackID = "AWS RDS"
+		attachment.Actions = []slack.AttachmentAction{
+			{
+				Name: actionSelect,
+				Type: "select",
+				Options: []slack.AttachmentActionOption{
+					{
+						Text:  "List All RDS DB",
+						Value: "List All RDS DB",
+					},
+					{
+						Text:  "List RDS DB By Name",
+						Value: "List RDS DB By Name",
+					},
+				},
+			},
+			{
+				Name:  actionCancel,
+				Text:  "Cancel",
+				Type:  "button",
+				Style: "danger",
+			},
+		}
+		err := repo.EphemeralMenuMessage(channel, attachment)
+		if err != nil {
+			log.Printf("[ERROR] Unable to send message to Slack Channel %s", err)
+		}
 	case "help":
 		attachment := slack.Attachment{}
 		attachment.Color = "#36a64f"
 		attachment.Pretext = "Chatbot Help"
-		attachment.Title = "Supported AWS Service - ec2, s3, sg or securitygroup, elbv1, elbv2"
+		attachment.Title = "Supported AWS Service - ec2, s3, sg or securitygroup, elbv1, elbv2, rds"
 		attachment.Text = "Usage Example: /awsChatbot ec2"
 		attachment.CallbackID = "Invalid"
 		err := repo.EphemeralMenuMessage(channel, attachment)
